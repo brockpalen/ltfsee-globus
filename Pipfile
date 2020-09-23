@@ -19,6 +19,9 @@ yamllint = "*"
 pyinstaller = "*"
 
 [packages]
+flask-restx = "*"
+flask = "*"
+ltfsee-globus = {editable = true, path = "."}
 
 [requires]
 python_version = "3.6"

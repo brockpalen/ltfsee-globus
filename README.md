@@ -21,5 +21,6 @@ It provides two compoents
 
  * pipenv install --dev
  * pipenv shell  ( like venv activate )
- * pytest
+ * export FLASK_APP=ltfsee_globus
+ * flask run
 
