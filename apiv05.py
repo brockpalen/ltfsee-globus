@@ -2,8 +2,7 @@
 from flask import Blueprint
 from flask_restx import Api
 
-# from apis.file_state import api as file_state
-
+from apis.file_state import api as file_state
 
 # https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md
 # http://flask-restplus.readthedocs.io/en/stable/swagger.html
@@ -19,4 +18,4 @@ api = Api(
     # All API metadatas
 )
 
-# api.add_namespace(file_state)
+api.add_namespace(file_state)
