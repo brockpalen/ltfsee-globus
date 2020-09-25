@@ -2,8 +2,12 @@
 import logging
 
 from flask import Flask
+from flask.logging import default_handler
 
 from apiv05 import blueprint as apiv05
+
+root = logging.getLogger()
+root.addHandler(default_handler)
 
 app = Flask(__name__)
 
@@ -11,8 +15,8 @@ app = Flask(__name__)
 app.config.from_object("config.DevelopmentConfig")
 
 if app.config["DEBUG"] is True:
-    logging.basicConfig(level=logging.DEBUG)
+    root.setLevel(logging.DEBUG)
 else:
-    logging.basicConfig(level=logging.WARNING)
+    root.setLevel(logging.WARNING)
 
 app.register_blueprint(apiv05)
