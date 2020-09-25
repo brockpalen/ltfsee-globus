@@ -10,7 +10,7 @@ app = Flask(__name__)
 # Flask Configuration
 app.config.from_object("config.DevelopmentConfig")
 
-if app.config["DEBUG"] == True:
+if app.config["DEBUG"] is True:
     logging.basicConfig(level=logging.DEBUG)
 else:
     logging.basicConfig(level=logging.WARNING)
