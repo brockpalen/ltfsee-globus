@@ -33,7 +33,7 @@ class FileState(Resource):
     @api.expect(file_model, validate=True)
     @api.response(404, "No such file")
     def post(self, **kwargs):
-        """POST method to send payload of file path to check status of."""
+        """POST method to send payload of file path to check status of files."""
         path = request.json["path"]
 
         logging.debug(f"Checking state of {path} from {request.remote_addr}")
