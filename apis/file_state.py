@@ -49,5 +49,7 @@ class FileState(Resource):
         # pass in the path including wild cards to get list of file states
         file_state = EEADM_File_State(path)
 
+        logging.debug(file_state.files)
+
         logging.debug(f"Checking state of {path} from {request.remote_addr}")
         return file_state.files, HTTPStatus.CREATED
