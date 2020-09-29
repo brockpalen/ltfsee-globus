@@ -16,7 +16,13 @@ api = Namespace(
 # model for returning data from eeadm file state -s
 # https://www.ibm.com/support/knowledgecenter/ST9MBR_1.3.0/ee_eeadm_file_state_command_output.html
 file_state_model = api.model(
-    "file_state", {"state": fields.String, "replicas": fields.Integer}
+    "file_state",
+    {
+        "state": fields.String,
+        "replicas": fields.Integer,
+        "tapes": fields.List(fields.String),
+        "path": fields.String,
+    },
 )
 
 # model for the input of a file

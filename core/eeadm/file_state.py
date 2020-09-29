@@ -70,8 +70,11 @@ class EEADM_File_State(EEADM):
             match = re.match(
                 r"([PMR])\s+(\d+)\s+(\S+)\s+(\S+)\s+(\S+)\s+\-\-\s+(\/.+)", entry
             )
-            tapes = [match[3], match[4], match[5]]
-            logging.debug(f"Entry: {entry}")
+            tapes = []
+            for tape in [match[3], match[4], match[5]]:
+                if not tape == "-":
+                    tapes.append(tape)
+            logging.debug(f"File Entry: {entry}")
             self.files.append(
                 LtfseeFile(
                     state=match[1], replicas=match[2], tapes=tapes, path=match[6]
