@@ -1,9 +1,10 @@
 """Cases for eeadm/file_state.py."""
+import logging
 from contextlib import ExitStack as does_not_raise
 
 import pytest
 
-from core.eeadm.file_state import LtfseeFile
+from core.eeadm.file_state import EEADM_File_State, LtfseeFile
 
 # [root@ltfs204 gpfs0]# eeadm file state sample* -s
 # P  2  JD0099JD@POOL_JD@ts4500  MB0355JE@POOL_JE@ts4500  -   -- /gpfs/gpfs0/sample_file
@@ -51,3 +52,11 @@ def test_LtfseeFile(kwargs, expex):
     """
     with expex:
         LtfseeFile(**kwargs)
+
+
+def test_EEADM_File_state():
+    files = EEADM_File_State("/gpfs/gpfs0/*")
+    logging.debug(files)
+    for entry in files.files:
+        logging.debug(entry)
+    assert len(files) == 3  # nosec
