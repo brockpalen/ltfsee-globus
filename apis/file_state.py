@@ -5,6 +5,8 @@ from http import HTTPStatus
 from flask import request
 from flask_restx import Namespace, Resource, fields
 
+from core.eeadm.file_state import EEADM_File_State
+
 logging.getLogger(__name__).addHandler(logging.NullHandler)
 
 api = Namespace(
@@ -30,7 +32,7 @@ class FileState(Resource):
     https://www.ibm.com/support/knowledgecenter/ST9MBR_1.3.0/ee_eeadm_file_state_command_output.html
     """
 
-    @api.marshal_with(file_state_model, code=HTTPStatus.CREATED.value)
+    @api.marshal_list_with(file_state_model, code=HTTPStatus.CREATED.value)
     @api.expect(file_model, validate=True)
     @api.response(HTTPStatus.NOT_FOUND.value, "No such file")
     @api.response(HTTPStatus.CREATED.value, "Request for file state created")
@@ -38,5 +40,8 @@ class FileState(Resource):
         """POST method to send payload of file path to check status of files."""
         path = request.json["path"]
 
+        # pass in the path including wild cards to get list of file states
+        file_state = EEADM_File_State(path)
+
         logging.debug(f"Checking state of {path} from {request.remote_addr}")
-        return {"state": "M", "replicas": 2}, HTTPStatus.CREATED
+        return file_state.files, HTTPStatus.CREATED
