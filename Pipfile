@@ -22,6 +22,7 @@ pyinstaller = "*"
 flask-restx = "*"
 flask = "*"
 ltfsee-globus = {editable = true, path = "."}
+sh = "*"
 
 [requires]
 python_version = "3.6"
