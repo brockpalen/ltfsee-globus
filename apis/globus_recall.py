@@ -14,6 +14,7 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 
 from core.eeadm.file_state import EEADM_File_State
+from core.eeadm.recall import EEADM_Recall
 
 logging.getLogger(__name__).addHandler(logging.NullHandler)
 
@@ -37,6 +38,18 @@ response_model = api.model(
 )
 
 
+def globus_recall(path, taskid, library=None):
+    """Issue recall request selecting correct library.
+
+    TODO select library
+    if library use it
+    else if one library configured use that library
+    else if multiple configured use hash(taskid) % 2 to load balance
+    else assume single library and don't include
+    """
+    EEADM_Recall(path, library=library)
+
+
 # create teh API
 @api.route("/globus_recall")
 class GlobusRecall(Resource):
@@ -52,12 +65,6 @@ class GlobusRecall(Resource):
         taskid = request.json["globus_taskid"]
         library = request.json["library"]
 
-        # TODO select library
-        # if library use it
-        # else if one library configured use that library
-        # else if multiple configured use hash(taskid) % 2 to load balance
-        # else assume single library and don't include
-
         # pass in the path including wild cards to get list of file states
         file_state = EEADM_File_State(path)
 
@@ -66,5 +73,7 @@ class GlobusRecall(Resource):
         if file_state.files[1].state in ["R", "P"]:  # resident or premigrated
             return {"state": "resident"}, HTTPStatus.CREATED
 
-        # file is migrated state recall
+        # file is migrated, recall
+        globus_recall(path, taskid, library=library)
+
         return {"state": "archived"}, HTTPStatus.CREATED

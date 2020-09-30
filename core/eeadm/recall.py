@@ -28,9 +28,9 @@ class EEADM_Recall(EEADM):
 
         args = ["recall"]
         if library:
-            logging.debug(f"For file {path} using library {library}")
             args += ["-l", library]
 
+        logging.debug(f"For file {path} using library {library}")
         sh.sleep("30", _bg=True)
 
         # sh.eeadm(args, _bg=True)
