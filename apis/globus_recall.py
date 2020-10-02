@@ -10,7 +10,7 @@ Optionally use globus task ID to select library to recall from TODO
 import logging
 from http import HTTPStatus
 
-from flask import request
+from flask import abort, request
 from flask_restx import Namespace, Resource, fields
 
 from core.eeadm.file_state import EEADM_File_State
@@ -63,17 +63,23 @@ class GlobusRecall(Resource):
         """POST method to send payload of to recall file if not exist."""
         path = request.json["path"]
         taskid = request.json["globus_taskid"]
-        library = request.json["library"]
+        library = request.json.get("library")
 
         # pass in the path including wild cards to get list of file states
         file_state = EEADM_File_State(path)
 
-        logging.debug(file_state.files[1].state)
+        logging.debug(f"Current state: {file_state.files[0].state}")
 
-        if file_state.files[1].state in ["R", "P"]:  # resident or premigrated
+        if file_state.files[0].state in ["R", "P"]:  # resident or premigrated
             return {"state": "resident"}, HTTPStatus.CREATED
-
-        # file is migrated, recall
-        globus_recall(path, taskid, library=library)
-
-        return {"state": "archived"}, HTTPStatus.CREATED
+        elif file_state.files[0].state == "M":  # Migrated
+            # start recall
+            globus_recall(path, taskid, library=library)
+            return {"state": "archived"}, HTTPStatus.CREATED
+        else:  # should never get here error
+            logging.error(
+                f"LTFSEE returned invalid file state {file_state.files[0].state}"
+            )
+            abort(
+                HTTPStatus.INTERNAL_SERVER_ERROR, "LTFSEE returned unkonwn file state"
+            )
