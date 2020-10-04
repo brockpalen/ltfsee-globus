@@ -46,8 +46,10 @@ def resident_file_single():
     return files
 
 
-def invalid_file_single():
-    """Attempt LtfseeFile example in error state."""
+# @pytest.fixture  # can't be fixture see:
+# https://github.com/pytest-dev/pytest/issues/349
+def error_file_single():
+    """Attempt LtfseeFile example in Resident state."""
     files = [
         LtfseeFile(state="E", replicas=0, tapes=[], path="/gpfs/gpfs0/sample_file3"),
     ]
