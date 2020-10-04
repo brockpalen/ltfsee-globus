@@ -55,3 +55,14 @@ def error_file_single():
     ]
 
     return files
+
+
+@pytest.fixture(scope="module")
+def flask_context():
+    """create flask app context for tests that need that"""
+    # http://stackoverflow.com/questions/17375340/testing-code-that-requires-a-flask-app-or-request-context
+
+    ctx = app.app_context()
+    ctx.push()
+
+    yield ctx

@@ -23,6 +23,7 @@ class DevelopmentConfig(Config):
     """Development configuration options."""
 
     DEBUG = True
+    LTFSEE_LIB = ["tplib_l", "asb_tplib_l"]
     print("APP IN DEBUG MODE. Should not be seen in production")
     # SQLALCHEMY_ECHO = True
 

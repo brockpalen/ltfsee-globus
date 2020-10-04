@@ -11,8 +11,10 @@ from conftest import (
     premigrated_file_single,
     resident_file_single,
 )
+from flask import current_app
 
 import apis
+from apis.globus_recall import globus_recall
 
 
 @pytest.mark.parametrize(
@@ -84,3 +86,44 @@ def test_api_globus_recall_post_error(
     # we expect only 201 rsponse codes
     logging.debug(f"status_code is {response.status_code}")
     assert response.status_code == httpresp  # nosec
+
+
+@pytest.mark.parametrize(
+    "lib_list,kwargs,calls",
+    [
+        (
+            ["lib2"],
+            {"taskid": "535f580c"},
+            {"library": "lib2"},
+        ),  # single library configured
+        (
+            ["lib1", "lib2"],
+            {"taskid": "535f580c"},
+            {"library": "lib1"},
+        ),  # multiple lib hash = 0
+        (
+            ["lib1", "lib2"],
+            {"taskid": "535f580b"},
+            {"library": "lib2"},
+        ),  # multiple lib hash = 1
+        (None, {"taskid": "535f580c"}, {}),  # no library given
+        (
+            None,
+            {"taskid": "535f580c", "library": "custom_lib"},
+            {"library": "custom_lib"},
+        ),  # lib passed
+    ],
+)
+def test_globus_recall_lib_selection(
+    flask_context, monkeypatch, lib_list, kwargs, calls
+):
+    """Validate that it correctly selects libraries based on configuration options."""
+    current_app.config["LTFSEE_LIB"] = lib_list
+    logging.debug(current_app.config["LTFSEE_LIB"])
+    mock = MagicMock()
+    monkeypatch.setattr(apis.globus_recall, "EEADM_Recall", mock)
+
+    globus_recall("/gpfs/glues0/file.dat", **kwargs)
+    mock.assert_called_once()
+    logging.debug(f"EEADM_Recall() called with: {mock.call_args}")
+    mock.assert_called_with("/gpfs/glues0/file.dat", **calls)

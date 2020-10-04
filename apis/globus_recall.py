@@ -8,9 +8,10 @@ Optionally use globus task ID to select library to recall from TODO
 """
 
 import logging
+from hashlib import md5
 from http import HTTPStatus
 
-from flask import abort, request
+from flask import abort, current_app, request
 from flask_restx import Namespace, Resource, fields
 
 from core.eeadm.file_state import EEADM_File_State
@@ -47,7 +48,25 @@ def globus_recall(path, taskid, library=None):
     else if multiple configured use hash(taskid) % 2 to load balance
     else assume single library and don't include
     """
-    EEADM_Recall(path, library=library)
+
+    if library:
+        logging.debug(f"Library specified set to {library}")
+        EEADM_Recall(path, library=library)
+    elif current_app.config["LTFSEE_LIB"]:
+        num_libs = len(current_app.config["LTFSEE_LIB"])
+        # hash taskid % ( num_libs )
+        # use a fast deterministic hash
+        # we use a hash to try and best aprox load balance even if ids are inrementing
+        lib_idx = (
+            int(md5(taskid.encode("utf-8")).hexdigest(), 16) % num_libs
+        )  # nosec using for speed not sec
+        library = current_app.config["LTFSEE_LIB"][lib_idx]
+        logging.debug(f"Multiple LTFSEE_LIB configured using: {library}")
+        EEADM_Recall(path, library=library)
+    else:
+        # no library configured
+        logging.debug("LTFSEE_LIB not configured or None not passing library")
+        EEADM_Recall(path)
 
 
 # create teh API
