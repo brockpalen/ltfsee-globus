@@ -1,4 +1,4 @@
-"""Project global config file using Flask Config"""
+"""Project global config file using Flask Config."""
 
 # NOTE: Flask global config object ignores the value if not all CAPS
 
@@ -8,6 +8,10 @@ class Config(object):
 
     DEBUG = False
     TESTING = False
+    CACHE_TYPE = "filesystem"
+    CACHE_DEFAULT_TIMEOUT = 300  # seconds to cache
+    CACHE_DIR = "/tmp/ltfsee_globus"
+    CACHE_OPTIONS = {"mode": 0o400}  # 3 digit linux-style permissions octal mode
     # DATABASE_URI = 'sqlite://:memory:'
 
 

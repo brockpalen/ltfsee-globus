@@ -16,6 +16,7 @@ from flask_restx import Namespace, Resource, fields
 
 from core.eeadm.file_state import EEADM_File_State
 from core.eeadm.recall import EEADM_Recall
+from ltfsee_globus import cache
 
 logging.getLogger(__name__).addHandler(logging.NullHandler)
 
@@ -69,6 +70,12 @@ def globus_recall(path, taskid, library=None):
         EEADM_Recall(path)
 
 
+@cache.memoize()
+def cached_file_state(path):
+    """Use EEADM_File_State() to get status of file.  This is a verison that is wrapped for caching results as Globus has minimal control over how often it checks."""
+    return EEADM_File_State(path)
+
+
 # create teh API
 @api.route("/globus_recall")
 class GlobusRecall(Resource):
@@ -85,7 +92,7 @@ class GlobusRecall(Resource):
         library = request.json.get("library")
 
         # pass in the path including wild cards to get list of file states
-        file_state = EEADM_File_State(path)
+        file_state = cached_file_state(path)
 
         logging.debug(f"Current state: {file_state.files[0].state}")
 

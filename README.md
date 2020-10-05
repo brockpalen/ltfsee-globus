@@ -24,3 +24,11 @@ It provides two compoents
  * export FLASK_APP=ltfsee_globus
  * flask run
 
+#### Caching file states
+
+You if your average recall time per file is high, and globus is sending requests very often you may wish to cache results of `eeadm file state`.
+
+You can do this by setting `CACHE_DEFAULT_TIMEOUT` confuration option.  This will return the last state of each file for `CACHE_DEFAULT_TIMEOUT` seconds before checking with the archive again.
+
+Setting this value to high may reduce messages in `eeadm` logs, but could delay globus starting the transfer of files that are now on disk cache, and slow new files getting into the queue.
+

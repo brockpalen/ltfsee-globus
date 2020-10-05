@@ -38,7 +38,7 @@ def test_api_globus_recall_post(client, monkeypatch, target_file, state, httpres
     def moc_con(*args, **kwargs):
         return mock
 
-    monkeypatch.setattr(apis.globus_recall, "EEADM_File_State", moc_con)
+    monkeypatch.setattr(apis.globus_recall, "cached_file_state", moc_con)
 
     response = client.post(
         "/api/v0.5/globus_recall/globus_recall",
@@ -58,7 +58,7 @@ def test_api_globus_recall_post(client, monkeypatch, target_file, state, httpres
 
 @pytest.mark.parametrize(
     "target_file,state,httpresp",
-    [(error_file_single(), "resident", HTTPStatus.INTERNAL_SERVER_ERROR),],
+    [(error_file_single(), "resident", HTTPStatus.INTERNAL_SERVER_ERROR)],
 )
 def test_api_globus_recall_post_error(
     client, monkeypatch, target_file, state, httpresp
@@ -75,7 +75,7 @@ def test_api_globus_recall_post_error(
     def moc_con(*args, **kwargs):
         return mock
 
-    monkeypatch.setattr(apis.globus_recall, "EEADM_File_State", moc_con)
+    monkeypatch.setattr(apis.globus_recall, "cached_file_state", moc_con)
 
     response = client.post(
         "/api/v0.5/globus_recall/globus_recall",

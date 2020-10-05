@@ -3,8 +3,7 @@ import logging
 
 from flask import Flask
 from flask.logging import default_handler
-
-from apiv05 import blueprint as apiv05
+from flask_caching import Cache
 
 root = logging.getLogger()
 root.addHandler(default_handler)
@@ -18,5 +17,9 @@ if app.config["DEBUG"] is True:
     root.setLevel(logging.DEBUG)
 else:
     root.setLevel(logging.WARNING)
+
+cache = Cache(app)
+
+from apiv05 import blueprint as apiv05
 
 app.register_blueprint(apiv05)

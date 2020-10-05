@@ -23,6 +23,7 @@ flask-restx = "*"
 flask = "*"
 ltfsee-globus = {editable = true, path = "."}
 sh = "*"
+flask-caching = "*"
 
 [requires]
 python_version = "3.6"
