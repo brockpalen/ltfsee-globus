@@ -32,3 +32,9 @@ You can do this by setting `CACHE_DEFAULT_TIMEOUT` confuration option.  This wil
 
 Setting this value to high may reduce messages in `eeadm` logs, but could delay globus starting the transfer of files that are now on disk cache, and slow new files getting into the queue.
 
+## Clients
+
+Packges comes with a few sample clients that can be called directly by Globus, see `clients` README for details.
+
+
+
