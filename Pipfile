@@ -24,6 +24,8 @@ flask = "*"
 ltfsee-globus = {editable = true, path = "."}
 sh = "*"
 flask-caching = "*"
+environs = "*"
+requests = "*"
 
 [requires]
 python_version = "3.6"
