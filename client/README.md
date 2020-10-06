@@ -17,6 +17,6 @@ All clients use the following environment variables for configuration
 
 Basic client, nothing special, 
 
-## advacned_client
+## advanced_client
 
 More complex client with syslog logging, log level, and NFS remapping if using CES/Protocal nodes with GPFS.
