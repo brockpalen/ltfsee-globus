@@ -11,7 +11,7 @@ from environs import Env
 env = Env()
 
 
-def remap_root(root):
+def remap_root_mounts(root):
     """Read /proc/mounts and remap path to server path.
 
     Eg. /nfs/dataden/export --> /gpfs/locker0/ces/g/dataden/export
@@ -31,7 +31,32 @@ def remap_root(root):
     raise ValueError
 
 
-def nfs_remap(path):
+def remap_root_autofs(root, autofs):
+    """Read /etc/auto.* and remap root to server path.
+
+    eg /nfs/dataden/export --> /gpfs/locker0/ces/g/dataden/export
+
+    root:  Path to root depth eg  /nfs/turbo/export
+    """
+
+    with open(autofs, "r") as mounts:
+        split_mounts = [s.split() for s in mounts.read().splitlines()]
+
+    # compare root/export to mount
+    export = str(root).split("/")[-1]  # split root eg /nfs/dataden/export
+    logging.debug(f"Found export name: {export}")
+    for p in split_mounts:
+        if p[0] == export:
+            new_root = p[2].split(":")[1]
+            logging.debug(f"Matched {root} to {p[1]} New Root: {new_root}")
+            return new_root
+
+    # shuld not get here raise
+    logging.critical(f"Did not find mount for {root}")
+    raise ValueError
+
+
+def nfs_remap(path, depth, autofs=None):
     """Remap filesystems that are exported over NFS to their path on GPFS.
 
     Eg:
@@ -45,7 +70,6 @@ def nfs_remap(path):
     # get old_root based on depth, eg '3' /nfs/dataden/umms-bleu/  '2' /nfs/dataden  etc.
     p = Path(path)
 
-    depth = env.int("DEPTH", 4)
     parts = p.parts
 
     old_root = Path(*parts[:depth])
@@ -56,15 +80,20 @@ def nfs_remap(path):
     logging.debug(f"Stub is: {stub}")
 
     # find match, in mount list, parse server path eg /gpfs/locker0/ces/dataden/g/umms-bleu
-    new_root = remap_root(old_root)
+    if autofs:
+        new_root = remap_root_autofs(old_root, autofs)
+    else:
+        new_root = remap_root_mounts(old_root)
 
     # prepend server path to stub and return
     remap_path = Path(new_root).joinpath(stub)
-    logging.debug(f"Remapped path is: {remap_path}")
+    logging.info(f"Remapped path is: {remap_path}")
     return str(remap_path)  # return path as a string
 
 
 if __name__ == "__main__":
+
+    # Configuration
     if env("DEBUG", False):
         logging.basicConfig(level=logging.DEBUG)
     else:
@@ -73,20 +102,32 @@ if __name__ == "__main__":
     # required
     # Path to file
     path = env("GLOBUS_STAGE_PATH")
-    logging.debug(f"Checking status of: {path}")
-
-    # remap path for NFS mounts
-    path = nfs_remap(path)
+    logging.info(f"Checking status of: {path}")
 
     # Globus taskid
     taskid = env("GLOBUS_STAGE_TASKID")
-    logging.debug(f"Globus TaskId: {taskid}")
+    logging.info(f"Globus TaskId: {taskid}")
 
     # Timeout value in seconds
     timeout = env("TIMEOUT", 10)
+    logging.debug(f"Timeout set to: {timeout}")
 
     # TODO: Hostname for API server
     apiserver = env("LTFSEE_URL", "http://localhost:5000")
+    logging.debug(f"LTFSEE Server is: {apiserver}")
+
+    # autofs config file to read, else use /proc/mounts
+    autofs = env("AUTOFS")
+    logging.debug(f"Using AutoFS file: {autofs}")
+
+    # how far depth we should look to find the 'export' name in the root
+    # eg:  4  /nfs/dataden/<export>,   3 /nfs/export etc
+    depth = env.int("DEPTH", 4)
+    logging.debug(f"DEPTH is set to {depth}")
+
+    # main
+    # remap path for NFS mounts
+    path = nfs_remap(path, depth=depth, autofs=autofs)
 
     data = {"path": path, "globus_taskid": taskid}
 
