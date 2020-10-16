@@ -11,12 +11,12 @@ root.addHandler(default_handler)
 app = Flask(__name__)
 
 # Flask Configuration
-app.config.from_object("config.DevelopmentConfig")
+app.config.from_object("config")
+
+root.setLevel(app.config["LOGLEVEL"])
 
 if app.config["DEBUG"] is True:
     root.setLevel(logging.DEBUG)
-else:
-    root.setLevel(logging.WARNING)
 
 cache = Cache(app)
 

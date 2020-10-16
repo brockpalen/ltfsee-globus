@@ -19,10 +19,10 @@ It provides two compoents
 
 #### Dev options
 
- * pipenv install --dev
- * pipenv shell  ( like venv activate )
- * export FLASK_APP=ltfsee_globus
- * flask run
+ * `pipenv install --dev`
+ * `pipenv shell`  ( like venv activate )
+ * `pytest`
+ * `FLASK_DEBUG=True FLASK_ENV=development FLASK_APP=ltfsee_globus flask run`
 
 #### Caching file states
 
@@ -37,4 +37,18 @@ Setting this value to high may reduce messages in `eeadm` logs, but could delay 
 Packges comes with a few sample clients that can be called directly by Globus, see `clients` README for details.
 
 
+## Configuration
 
+Configuration is controlled by environment variables using the [Environs](https://pypi.org/project/environs/) package. Values and default are in `config.py`. The default values can be changed by creating a `.env` file or modifying the environment.
+
+## Deploying in production
+
+Given the nature of this API it is recomended you use host side firewall rules to only allow API calls from the Globus servers and not systems that allow user interaction. 
+
+The built in `flask` server is not suitable for production. Currently testing is done with [Gunicorn](https://docs.gunicorn.org/en/stable/settings.html#)
+
+ 1. Get SSL Certs
+ 1. Add `apiuser` service user
+ 1. Grant `apiuser` `sudo` access to `eeadm` command
+ 1. Start Gunicorn
+ 1. ???
