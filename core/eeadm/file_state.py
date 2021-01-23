@@ -1,11 +1,9 @@
 """eeadm file state <file>."""
-import logging
 import re
 import subprocess
 
 from . import EEADM
-
-logging.getLogger(__name__).addHandler(logging.NullHandler)
+from .log import logger
 
 
 class LtfseeFile:
@@ -56,7 +54,7 @@ class EEADM_File_State(EEADM):
         """
 
         args = ["eeadm", "file", "state", "-s", path]
-        logging.info(f"Calling {args}")
+        logger.info(f"Calling {args}")
         proc = subprocess.run(
             args,
             stdout=subprocess.PIPE,
@@ -67,10 +65,10 @@ class EEADM_File_State(EEADM):
         )
 
         results = list()
-        logging.debug(proc.stdout)
+        logger.debug(proc.stdout)
         results.append(proc.stdout)
         # for line in proc.stdout:
-        #    logging.debug(line)
+        #    logger.debug(line)
         #    results.append(line)
 
         #        results = [
@@ -88,7 +86,7 @@ class EEADM_File_State(EEADM):
             for tape in [match[3], match[4], match[5]]:
                 if not tape == "-":
                     tapes.append(tape)
-            logging.debug(f"File Entry: {entry}")
+            logger.debug(f"File Entry: {entry}")
             self.files.append(
                 LtfseeFile(
                     state=match[1], replicas=match[2], tapes=tapes, path=match[6]

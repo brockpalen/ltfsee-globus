@@ -1,11 +1,8 @@
 """eeadm recall."""
-import logging
-
 import sh
 
 from . import EEADM
-
-logging.getLogger(__name__).addHandler(logging.NullHandler)
+from .log import logger
 
 
 class EEADM_Recall(EEADM):
@@ -30,7 +27,7 @@ class EEADM_Recall(EEADM):
         if library:
             args += ["-l", library]
 
-        logging.debug(f"For file {path} using library {library}")
+        logger.debug(f"For file {path} using library {library}")
         sh.eeadm(sh.echo(path), "recall", _bg=True)
 
         # sh.eeadm(args, _bg=True)
