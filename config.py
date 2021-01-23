@@ -9,7 +9,7 @@ class Config(object):
     DEBUG = False
     TESTING = False
     CACHE_TYPE = "filesystem"
-    CACHE_DEFAULT_TIMEOUT = 300  # seconds to cache
+    CACHE_DEFAULT_TIMEOUT = 3  # seconds to cache
     CACHE_DIR = "/tmp/ltfsee_globus"
     CACHE_OPTIONS = {"mode": 0o400}  # 3 digit linux-style permissions octal mode
     # DATABASE_URI = 'sqlite://:memory:'
@@ -21,13 +21,14 @@ class ProductionConfig(Config):
     # DATABASE_URI = 'mysql://user@localhost/foo'
     DEBUG = False
     TESTING = False
+    LTFSEE_LIB = ["tplib_l", "asb_tplib_l"]
 
 
 class DevelopmentConfig(Config):
     """Development configuration options."""
 
     DEBUG = True
-    LTFSEE_LIB = ["tplib_l", "asb_tplib_l"]
+    LTFSEE_LIB = ["lib1"]
     print("APP IN DEBUG MODE. Should not be seen in production")
     # SQLALCHEMY_ECHO = True
 

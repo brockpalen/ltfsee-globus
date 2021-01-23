@@ -1,6 +1,7 @@
 """eeadm file state <file>."""
 import logging
 import re
+import subprocess
 
 from . import EEADM
 
@@ -54,16 +55,29 @@ class EEADM_File_State(EEADM):
         path - IN  file path or shell glob to pass to eeadm file state <path>
         """
 
-        # subprocess.call(eeadm file state -s <path>)
-        # for line in list:
-        #     Parse line into LtfseeFile
-        #     Push onto list
+        args = ["eeadm", "file", "state", "-s", path]
+        logging.debug(f"Calling {args}")
+        proc = subprocess.run(
+            args,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            timeout=10,
+            check=True,
+            universal_newlines=True,
+        )
 
-        results = [
-            "P  2  JD0099JD@POOL_JD@ts4500  MB0355JE@POOL_JE@ts4500  -   -- /gpfs/gpfs0/sample_file",
-            "M  1  MB0355JE@POOL_JE@ts4500  -                        -   -- /gpfs/gpfs0/sample_file2",
-            "R  0  -                        -                        -   -- /gpfs/gpfs0/sample_file3",
-        ]
+        results = list()
+        logging.debug(proc.stdout)
+        results.append(proc.stdout)
+        # for line in proc.stdout:
+        #    logging.debug(line)
+        #    results.append(line)
+
+        #        results = [
+        #            "P  2  JD0099JD@POOL_JD@ts4500  MB0355JE@POOL_JE@ts4500  -   -- /gpfs/gpfs0/sample_file",
+        #            "M  1  MB0355JE@POOL_JE@ts4500  -                        -   -- /gpfs/gpfs0/sample_file2",
+        #            "R  0  -                        -                        -   -- /gpfs/gpfs0/sample_file3",
+        #        ]
 
         self.files = []  # Will host list of files matched by glob
         for entry in results:

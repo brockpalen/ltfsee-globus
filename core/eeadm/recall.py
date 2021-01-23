@@ -26,11 +26,11 @@ class EEADM_Recall(EEADM):
         library - IN If multi-Library system required
         """
 
-        args = ["recall"]
+        args = ["eeadm", "recall"]
         if library:
             args += ["-l", library]
 
         logging.debug(f"For file {path} using library {library}")
-        sh.sleep("30", _bg=True)
+        sh.eeadm(sh.echo(path), "recall", _bg=True)
 
         # sh.eeadm(args, _bg=True)
