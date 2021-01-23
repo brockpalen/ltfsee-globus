@@ -7,7 +7,6 @@ Optonally can specify library to recall from TODO
 Optionally use globus task ID to select library to recall from TODO
 """
 
-import logging
 from hashlib import md5
 from http import HTTPStatus
 
@@ -18,7 +17,6 @@ from core.eeadm.file_state import EEADM_File_State
 from core.eeadm.recall import EEADM_Recall
 from ltfsee_globus import cache
 
-logging.getLogger(__name__).addHandler(logging.NullHandler)
 
 api = Namespace(
     "globus_recall",
@@ -51,7 +49,7 @@ def globus_recall(path, taskid, library=None):
     """
 
     if library:
-        logging.info(f"Library specified set to {library}")
+        api.logger.info(f"Library specified set to {library}")
         EEADM_Recall(path, library=library)
     elif current_app.config["LTFSEE_LIB"]:
         num_libs = len(current_app.config["LTFSEE_LIB"])
@@ -62,11 +60,11 @@ def globus_recall(path, taskid, library=None):
             int(md5(taskid.encode("utf-8")).hexdigest(), 16) % num_libs
         )  # nosec using for speed not sec
         library = current_app.config["LTFSEE_LIB"][lib_idx]
-        logging.info(f"Multiple LTFSEE_LIB configured using: {library}")
+        api.logger.info(f"Multiple LTFSEE_LIB configured using: {library}")
         EEADM_Recall(path, library=library)
     else:
         # no library configured
-        logging.info("LTFSEE_LIB not configured or None not passing library")
+        api.logger.info("LTFSEE_LIB not configured or None not passing library")
         EEADM_Recall(path)
 
 
@@ -94,7 +92,7 @@ class GlobusRecall(Resource):
         # pass in the path including wild cards to get list of file states
         file_state = cached_file_state(path)
 
-        logging.info(f"Current state: {file_state.files[0].state}")
+        api.logger.info(f"Current state: {file_state.files[0].state}")
 
         if file_state.files[0].state in ["R", "P"]:  # resident or premigrated
             return {"state": "resident"}, HTTPStatus.CREATED
@@ -103,7 +101,7 @@ class GlobusRecall(Resource):
             globus_recall(path, taskid, library=library)
             return {"state": "archived"}, HTTPStatus.CREATED
         else:  # should never get here error
-            logging.error(
+            api.logger.error(
                 f"LTFSEE returned invalid file state {file_state.files[0].state}"
             )
             abort(

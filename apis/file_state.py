@@ -1,13 +1,10 @@
 """API for eeadm file state."""
-import logging
 from http import HTTPStatus
 
 from flask import request
 from flask_restx import Namespace, Resource, fields
 
 from core.eeadm.file_state import EEADM_File_State
-
-logging.getLogger(__name__).addHandler(logging.NullHandler)
 
 api = Namespace(
     "file_state", description="Get state of a file in archive eeadm file state"
@@ -49,7 +46,7 @@ class FileState(Resource):
         # pass in the path including wild cards to get list of file states
         file_state = EEADM_File_State(path)
 
-        logging.debug(file_state.files)
+        api.logger.debug(file_state.files)
 
-        logging.info(f"Checking state of {path} from {request.remote_addr}")
+        api.logger.info(f"Checking state of {path} from {request.remote_addr}")
         return file_state.files, HTTPStatus.CREATED

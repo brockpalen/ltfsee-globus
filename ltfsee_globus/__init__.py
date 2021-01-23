@@ -1,22 +1,16 @@
 """Flask Application entrypoint."""
-import logging
+from logging.config import fileConfig
 
 from flask import Flask
-from flask.logging import default_handler
 from flask_caching import Cache
 
-root = logging.getLogger()
-root.addHandler(default_handler)
+# setup logging configuration
+fileConfig("logging.cfg", disable_existing_loggers=False)
 
 app = Flask(__name__)
 
 # Flask Configuration
 app.config.from_object("config")
-
-if app.config["DEBUG"] is True:
-    root.setLevel(logging.DEBUG)
-else:
-    root.setLevel(logging.WARNING)
 
 cache = Cache(app)
 
