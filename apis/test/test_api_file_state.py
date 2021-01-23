@@ -5,7 +5,7 @@ from unittest.mock import MagicMock
 
 import pytest
 
-import core
+import apis
 from core.eeadm.file_state import LtfseeFile
 
 
@@ -17,15 +17,18 @@ def test_api_file_state_post(client, monkeypatch):
     #  "M  1  MB0355JE@POOL_JE@ts4500  -                        -   -- /gpfs/gpfs0/sample_file2",
     #  "R  0  -                        -                        -   -- /gpfs/gpfs0/sample_file3",
 
+    eeadm_mock = MagicMock(name="EEADM")
     mock = MagicMock()
     files = [
-        LtfseeFile(state="P", replicas=2, tapes=[], path="/gpfs/gpfs0/sample_file"),
-        LtfseeFile(state="M", replicas=1, tapes=[], path="/gpfs/gpfs0/sample_file2"),
-        LtfseeFile(state="R", replicas=0, tapes=[], path="/gpfs/gpfs0/sample_file3"),
+        LtfseeFile(state="P", replicas=2, tapes=["-","-","-"], path="/gpfs/gpfs0/sample_file"),
+        LtfseeFile(state="M", replicas=1, tapes=["-","-","-"], path="/gpfs/gpfs0/sample_file2"),
+        LtfseeFile(state="R", replicas=0, tapes=["-","-","-"], path="/gpfs/gpfs0/sample_file3"),
     ]
-    mock.files.return_value = files
+    mock.files = files
+    eeadm_mock.return_value = mock
 
-    monkeypatch.setattr(core.eeadm.file_state, "EEADM_File_State", mock)
+    monkeypatch.setattr(apis.file_state, "EEADM_File_State", eeadm_mock)
+    #monkeypatch.setattr(core.eeadm.file_state, "EEADM_File_State", mock)
 
     response = client.post(
         "/api/v0.5/file_state/file_state",
