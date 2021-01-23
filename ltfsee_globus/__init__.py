@@ -11,7 +11,7 @@ root.addHandler(default_handler)
 app = Flask(__name__)
 
 # Flask Configuration
-app.config.from_object("config.DevelopmentConfig")
+app.config.from_object("config")
 
 if app.config["DEBUG"] is True:
     root.setLevel(logging.DEBUG)

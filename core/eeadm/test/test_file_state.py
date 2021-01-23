@@ -55,7 +55,7 @@ def test_LtfseeFile(kwargs, expex):
 
 
 # removed as globs are not accepted anymore
-#def test_EEADM_File_state():
+# def test_EEADM_File_state():
 #    """Calls EEADM_File_State on the bogus list of files which returns 3 files."""
 #    files = EEADM_File_State("/gpfs/gpfs0/*")
 #    logging.debug(files)
