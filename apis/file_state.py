@@ -51,5 +51,5 @@ class FileState(Resource):
 
         logging.debug(file_state.files)
 
-        logging.debug(f"Checking state of {path} from {request.remote_addr}")
+        logging.info(f"Checking state of {path} from {request.remote_addr}")
         return file_state.files, HTTPStatus.CREATED

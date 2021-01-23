@@ -128,6 +128,7 @@ if __name__ == "__main__":
     # main
     # remap path for NFS mounts
     path = nfs_remap(path, depth=depth, autofs=autofs)
+    logging.info(f"Remapped path: {path}")
 
     data = {"path": path, "globus_taskid": taskid}
 

@@ -56,7 +56,7 @@ class EEADM_File_State(EEADM):
         """
 
         args = ["eeadm", "file", "state", "-s", path]
-        logging.debug(f"Calling {args}")
+        logging.info(f"Calling {args}")
         proc = subprocess.run(
             args,
             stdout=subprocess.PIPE,

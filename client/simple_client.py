@@ -16,11 +16,11 @@ else:
 # required
 # Path to file
 path = env("GLOBUS_STAGE_PATH")
-logging.debug(f"Checking status of: {path}")
+logging.info(f"Checking status of: {path}")
 
 # Globus taskid
 taskid = env("GLOBUS_STAGE_TASKID")
-logging.debug(f"Globus TaskId: {taskid}")
+logging.info(f"Globus TaskId: {taskid}")
 
 # TODO: Hostname for API server
 apiserver = env("LTFSEE_URL", "http://localhost:5000")

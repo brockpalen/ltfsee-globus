@@ -51,7 +51,7 @@ def globus_recall(path, taskid, library=None):
     """
 
     if library:
-        logging.debug(f"Library specified set to {library}")
+        logging.info(f"Library specified set to {library}")
         EEADM_Recall(path, library=library)
     elif current_app.config["LTFSEE_LIB"]:
         num_libs = len(current_app.config["LTFSEE_LIB"])
@@ -62,11 +62,11 @@ def globus_recall(path, taskid, library=None):
             int(md5(taskid.encode("utf-8")).hexdigest(), 16) % num_libs
         )  # nosec using for speed not sec
         library = current_app.config["LTFSEE_LIB"][lib_idx]
-        logging.debug(f"Multiple LTFSEE_LIB configured using: {library}")
+        logging.info(f"Multiple LTFSEE_LIB configured using: {library}")
         EEADM_Recall(path, library=library)
     else:
         # no library configured
-        logging.debug("LTFSEE_LIB not configured or None not passing library")
+        logging.info("LTFSEE_LIB not configured or None not passing library")
         EEADM_Recall(path)
 
 
@@ -94,7 +94,7 @@ class GlobusRecall(Resource):
         # pass in the path including wild cards to get list of file states
         file_state = cached_file_state(path)
 
-        logging.debug(f"Current state: {file_state.files[0].state}")
+        logging.info(f"Current state: {file_state.files[0].state}")
 
         if file_state.files[0].state in ["R", "P"]:  # resident or premigrated
             return {"state": "resident"}, HTTPStatus.CREATED
