@@ -21,8 +21,7 @@ It provides two compoents
 
  * pipenv install --dev
  * pipenv shell  ( like venv activate )
- * export FLASK_APP=ltfsee_globus
- * flask run
+ * FLASK_APP=ltfsee_globus AUTH_KEY=changeme CACHE_DEFAULT_TIMEOUT=300 flask run --port 8000
 
 #### Caching file states
 

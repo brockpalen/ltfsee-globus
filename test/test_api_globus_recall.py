@@ -64,7 +64,7 @@ def test_api_globus_recall_post(
     [(error_file_single(), "resident", HTTPStatus.INTERNAL_SERVER_ERROR)],
 )
 def test_api_globus_recall_post_error(
-    client, monkeypatch, target_file, state, httpresp
+    client, monkeypatch, target_file, state, httpresp, valid_auth_headers
 ):
     """Check that file_state returns expected behavior."""
     data = {"path": "/my/test/path/file.sh", "globus_taskid": "aaaa-bbbb"}
@@ -84,6 +84,7 @@ def test_api_globus_recall_post_error(
         "/api/v0.5/globus_recall/globus_recall",
         data=json.dumps(data),
         content_type="application/json",
+        headers=valid_auth_headers,
     )
 
     # we expect only 201 rsponse codes

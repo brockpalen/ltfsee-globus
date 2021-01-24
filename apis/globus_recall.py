@@ -15,6 +15,7 @@ from flask_restx import Namespace, Resource, fields
 
 from core.eeadm.file_state import EEADM_File_State
 from core.eeadm.recall import EEADM_Recall
+from ltfsee_globus.auth import token_required
 from ltfsee_globus.cache import cache
 
 api = Namespace(
@@ -82,6 +83,7 @@ class GlobusRecall(Resource):
     @api.expect(recall_model, validate=True)
     @api.response(HTTPStatus.NOT_FOUND.value, "No Such file")
     @api.response(HTTPStatus.CREATED.value, "Requst for recall / state created")
+    @token_required
     def post(self, **kwargs):
         """POST method to send payload of to recall file if not exist."""
         path = request.json["path"]
