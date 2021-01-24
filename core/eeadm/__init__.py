@@ -1,5 +1,6 @@
 """Module for manipulating eeadm commands for specturm archive."""
 
+
 class EEADM:
     """Base class for other classes."""
 

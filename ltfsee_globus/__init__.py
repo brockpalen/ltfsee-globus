@@ -2,18 +2,28 @@
 from logging.config import fileConfig
 
 from flask import Flask
-from flask_caching import Cache
 
-# setup logging configuration
-fileConfig("logging.cfg", disable_existing_loggers=False)
 
-app = Flask(__name__)
+def create_app(config="config"):
+    """Flask applicaiton factory pattern.
 
-# Flask Configuration
-app.config.from_object("config")
+    Use the Flask Applicaiton pattern
+    https://flask.palletsprojects.com/en/1.1.x/patterns/appfactories/
+    """
 
-cache = Cache(app)
+    # setup logging configuration
+    fileConfig("logging.cfg", disable_existing_loggers=False)
 
-from apiv05 import blueprint as apiv05
+    app = Flask(__name__)
 
-app.register_blueprint(apiv05)
+    # Flask Configuration
+    app.config.from_object("config")
+
+    from .cache import cache
+
+    cache.init_app(app)
+
+    from apiv05 import blueprint as apiv05
+
+    app.register_blueprint(apiv05)
+    return app

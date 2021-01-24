@@ -37,4 +37,6 @@ Setting this value to high may reduce messages in `eeadm` logs, but could delay 
 Packges comes with a few sample clients that can be called directly by Globus, see `clients` README for details.
 
 
+## Auth 
 
+Auth is managed by `AUTH_KEY` and clients provide the key in headers `X-API-KEY`.

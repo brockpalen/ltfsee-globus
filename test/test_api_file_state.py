@@ -9,7 +9,7 @@ import apis
 from core.eeadm.file_state import LtfseeFile
 
 
-def test_api_file_state_post(client, monkeypatch):
+def test_api_file_state_post(client, monkeypatch, valid_auth_headers):
     """Check that file_state returns expected behavior."""
     data = {"path": "/my/test/path/file.sh"}
 
@@ -46,5 +46,6 @@ def test_api_file_state_post(client, monkeypatch):
         "/api/v0.5/file_state/file_state",
         data=json.dumps(data),
         content_type="application/json",
+        headers=valid_auth_headers,  # valid login creds
     )
     assert response.status_code == HTTPStatus.CREATED  # nosec

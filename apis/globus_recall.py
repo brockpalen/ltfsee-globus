@@ -15,8 +15,7 @@ from flask_restx import Namespace, Resource, fields
 
 from core.eeadm.file_state import EEADM_File_State
 from core.eeadm.recall import EEADM_Recall
-from ltfsee_globus import cache
-
+from ltfsee_globus.cache import cache
 
 api = Namespace(
     "globus_recall",

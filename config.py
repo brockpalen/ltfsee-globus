@@ -15,6 +15,10 @@ from environs import Env
 env = Env()
 env.read_env()
 
+## API Key to pass in header X-API-KEY
+AUTH_KEY = env.str("AUTH_KEY")
+
+
 ## tape library names if multiple are available list them to load balance across them
 ## this does assume that all files are available on both libraries
 

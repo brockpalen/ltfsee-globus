@@ -5,6 +5,7 @@ from flask import request
 from flask_restx import Namespace, Resource, fields
 
 from core.eeadm.file_state import EEADM_File_State
+from ltfsee_globus.auth import token_required
 
 api = Namespace(
     "file_state", description="Get state of a file in archive eeadm file state"
@@ -39,6 +40,7 @@ class FileState(Resource):
     @api.expect(file_model, validate=True)
     @api.response(HTTPStatus.NOT_FOUND.value, "No such file")
     @api.response(HTTPStatus.CREATED.value, "Request for file state created")
+    @token_required
     def post(self, **kwargs):
         """POST method to send payload of file path to check status of files."""
         path = request.json["path"]
