@@ -22,12 +22,18 @@ logging.info(f"Checking status of: {path}")
 taskid = env("GLOBUS_STAGE_TASKID")
 logging.info(f"Globus TaskId: {taskid}")
 
+# X-API-KEY AUTH_KEY
+auth_key = env("AUTH_KEY")
+headers = {"X-API-KEY": auth_key}
+
 # TODO: Hostname for API server
 apiserver = env("LTFSEE_URL", "http://localhost:5000")
 
 data = {"path": path, "globus_taskid": taskid}
 
-r = requests.post(f"{apiserver}/api/v0.5/globus_recall/globus_recall", json=data)
+r = requests.post(
+    f"{apiserver}/api/v0.5/globus_recall/globus_recall", json=data, headers=headers
+)
 
 if r.status_code == 201:
     r_data = r.json()
