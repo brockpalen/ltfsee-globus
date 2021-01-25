@@ -125,6 +125,10 @@ if __name__ == "__main__":
     depth = env.int("DEPTH", 4)
     logging.debug(f"DEPTH is set to {depth}")
 
+    # X-API-KEY AUTH_KEY
+    auth_key = env("AUTH_KEY")
+    headers = {"X-API-KEY": auth_key}
+
     # main
     # remap path for NFS mounts
     path = nfs_remap(path, depth=depth, autofs=autofs)
@@ -133,7 +137,10 @@ if __name__ == "__main__":
     data = {"path": path, "globus_taskid": taskid}
 
     r = requests.post(
-        f"{apiserver}/api/v0.5/globus_recall/globus_recall", json=data, timeout=timeout
+        f"{apiserver}/api/v0.5/globus_recall/globus_recall",
+        json=data,
+        timeout=timeout,
+        headers=headers,
     )
 
     if r.status_code == 201:
