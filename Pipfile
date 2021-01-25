@@ -17,6 +17,7 @@ black = "==19.10b0"
 pre-commit = "*"
 yamllint = "*"
 pyinstaller = "*"
+pytest-flask = "*"
 
 [packages]
 flask-restx = "*"

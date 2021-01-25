@@ -1,25 +1,29 @@
 """Flask Application entrypoint."""
-import logging
+from logging.config import fileConfig
 
 from flask import Flask
-from flask.logging import default_handler
-from flask_caching import Cache
 
-root = logging.getLogger()
-root.addHandler(default_handler)
 
-app = Flask(__name__)
+def create_app(config="config"):
+    """Flask applicaiton factory pattern.
 
-# Flask Configuration
-app.config.from_object("config")
+    Use the Flask Applicaiton pattern
+    https://flask.palletsprojects.com/en/1.1.x/patterns/appfactories/
+    """
 
-root.setLevel(app.config["LOGLEVEL"])
+    # setup logging configuration
+    fileConfig("logging.cfg", disable_existing_loggers=False)
 
-if app.config["DEBUG"] is True:
-    root.setLevel(logging.DEBUG)
+    app = Flask(__name__)
 
-cache = Cache(app)
+    # Flask Configuration
+    app.config.from_object("config")
 
-from apiv05 import blueprint as apiv05
+    from .cache import cache
 
-app.register_blueprint(apiv05)
+    cache.init_app(app)
+
+    from apiv05 import blueprint as apiv05
+
+    app.register_blueprint(apiv05)
+    return app

@@ -2,7 +2,7 @@
 import json
 import logging
 from http import HTTPStatus
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 
 import pytest
 from conftest import (
@@ -25,25 +25,32 @@ from apis.globus_recall import globus_recall
         (resident_file_single(), "resident", HTTPStatus.CREATED),
     ],
 )
-def test_api_globus_recall_post(client, monkeypatch, target_file, state, httpresp):
+def test_api_globus_recall_post(
+    client, monkeypatch, target_file, state, httpresp, valid_auth_headers
+):
     """Check that file_state returns expected behavior."""
     data = {"path": "/my/test/path/file.sh", "globus_taskid": "aaaa-bbbb"}
 
     #  "P  2  JD0099JD@POOL_JD@ts4500  MB0355JE@POOL_JE@ts4500  -   -- /gpfs/gpfs0/sample_file",
     #  "M  1  MB0355JE@POOL_JE@ts4500  -                        -   -- /gpfs/gpfs0/sample_file2",
     #  "R  0  -                        -                        -   -- /gpfs/gpfs0/sample_file3",
-    mock = MagicMock()
+    mock = MagicMock(name="files")
     mock.files = target_file
 
     def moc_con(*args, **kwargs):
         return mock
 
+    def no_op(*args, **kwargs):
+        return None
+
     monkeypatch.setattr(apis.globus_recall, "cached_file_state", moc_con)
+    monkeypatch.setattr(apis.globus_recall, "EEADM_Recall", no_op)
 
     response = client.post(
         "/api/v0.5/globus_recall/globus_recall",
         data=json.dumps(data),
         content_type="application/json",
+        headers=valid_auth_headers,
     )
     json_data = response.get_json()
 
@@ -61,7 +68,7 @@ def test_api_globus_recall_post(client, monkeypatch, target_file, state, httpres
     [(error_file_single(), "resident", HTTPStatus.INTERNAL_SERVER_ERROR)],
 )
 def test_api_globus_recall_post_error(
-    client, monkeypatch, target_file, state, httpresp
+    client, monkeypatch, target_file, state, httpresp, valid_auth_headers
 ):
     """Check that file_state returns expected behavior."""
     data = {"path": "/my/test/path/file.sh", "globus_taskid": "aaaa-bbbb"}
@@ -81,6 +88,7 @@ def test_api_globus_recall_post_error(
         "/api/v0.5/globus_recall/globus_recall",
         data=json.dumps(data),
         content_type="application/json",
+        headers=valid_auth_headers,
     )
 
     # we expect only 201 rsponse codes

@@ -22,7 +22,8 @@ It provides two compoents
  * `pipenv install --dev`
  * `pipenv shell`  ( like venv activate )
  * `pytest`
- * `FLASK_DEBUG=True FLASK_ENV=development FLASK_APP=ltfsee_globus flask run`
+ * `FLASK_DEBUG=True FLASK_ENV=development FLASK_APP=ltfsee_globus AUTH_KEY=changeme CACHE_DEFAULT_TIMEOUT=3 flask run`
+
 
 #### Caching file states
 
@@ -52,3 +53,9 @@ The built in `flask` server is not suitable for production. Currently testing is
  1. Grant `apiuser` `sudo` access to `eeadm` command
  1. Start Gunicorn
  1. ???
+=======
+
+
+## Auth 
+
+Auth is managed by `AUTH_KEY` and clients provide the key in headers `X-API-KEY`.
