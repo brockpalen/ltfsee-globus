@@ -1,4 +1,5 @@
 """eeadm file state <file>."""
+import time
 import re
 import subprocess
 
@@ -53,8 +54,8 @@ class EEADM_File_State(EEADM):
         path - IN  file path or shell glob to pass to eeadm file state <path>
         """
 
+        tic = time.perf_counter()
         args = ["eeadm", "file", "state", "-s", path]
-        logger.info(f"Calling {args}")
         proc = subprocess.run(
             args,
             stdout=subprocess.PIPE,
@@ -63,6 +64,8 @@ class EEADM_File_State(EEADM):
             check=True,
             universal_newlines=True,
         )
+        toc = time.perf_counter()
+        logger.info(f"Duration: {toc - tic:0.4f} Called {args}")
 
         results = list()
         logger.debug(proc.stdout)
