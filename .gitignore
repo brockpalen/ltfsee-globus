@@ -3,6 +3,11 @@
 *.txt
 *.swp
 
+# ignore SSL secrets
+ssl/*.key
+ssl/*.csr
+ssl/*.crt
+
 
 # taken from https://github.com/github/gitignore/blob/master/Python.gitignore
 
